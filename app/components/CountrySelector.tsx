@@ -1,18 +1,19 @@
-import {useFetcher, useLocation, useMatches} from '@remix-run/react';
-import {Heading, Button, IconCheck} from '~/components';
-import {useCallback, useEffect, useRef} from 'react';
-import {useInView} from 'react-intersection-observer';
-import {Localizations, Locale, CartAction} from '~/lib/type';
-import {DEFAULT_LOCALE} from '~/lib/utils';
+import { useFetcher, useLocation, useMatches } from '@remix-run/react';
+import { Heading, Button, IconCheck } from '~/components';
+import { BiChevronDown } from 'react-icons/bi';
+import { useCallback, useEffect, useRef } from 'react';
+import { useInView } from 'react-intersection-observer';
+import { Localizations, Locale, CartAction } from '~/lib/type';
+import { DEFAULT_LOCALE } from '~/lib/utils';
 import clsx from 'clsx';
-import {CartBuyerIdentityInput} from '@shopify/hydrogen/storefront-api-types';
+import { CartBuyerIdentityInput } from '@shopify/hydrogen/storefront-api-types';
 
 export function CountrySelector() {
   const [root] = useMatches();
   const fetcher = useFetcher();
   const closeRef = useRef<HTMLDetailsElement>(null);
   const selectedLocale = root.data?.selectedLocale ?? DEFAULT_LOCALE;
-  const {pathname, search} = useLocation();
+  const { pathname, search } = useLocation();
   const pathWithoutLocale = `${pathname.replace(
     selectedLocale.pathPrefix,
     '',
@@ -24,7 +25,7 @@ export function CountrySelector() {
     ? `${defaultLocale?.language}-${defaultLocale?.country}`
     : '';
 
-  const {ref, inView} = useInView({
+  const { ref, inView } = useInView({
     threshold: 0,
     triggerOnce: true,
   });
@@ -47,21 +48,22 @@ export function CountrySelector() {
   return (
     <section
       ref={observerRef}
-      className="grid w-full gap-4"
+      className="grid gap-4 w-[250px]"
       onMouseLeave={closeDropdown}
     >
-      <Heading size="lead" className="cursor-default" as="h3">
+      {/* <Heading size="lead" className="cursor-default" as="h3">
         Country
-      </Heading>
+      </Heading> */}
       <div className="relative">
         <details
-          className="absolute w-full border rounded border-contrast/30 dark:border-white open:round-b-none overflow-clip"
+          className="w-full rounded border-contrast/30  open:round-b-none overflow-clip"
           ref={closeRef}
         >
           <summary className="flex items-center justify-between w-full px-4 py-3 cursor-pointer">
             {selectedLocale.label}
+            <BiChevronDown />
           </summary>
-          <div className="w-full overflow-auto border-t border-contrast/30 dark:border-white bg-contrast/30 max-h-36">
+          <div className="w-full overflow-auto border-t border-contrast/30  bg-contrast/30 max-h-36 absolute">
             {countries &&
               Object.keys(countries).map((countryPath) => {
                 const countryLocale = countries[countryPath];
@@ -114,7 +116,7 @@ function Country({
       <Button
         className={clsx([
           'text-contrast dark:text-primary',
-          'bg-primary dark:bg-contrast w-full p-2 transition rounded flex justify-start',
+          'bg-primary dark:bg-contrast w-full p-2 transition flex justify-start',
           'items-center text-left cursor-pointer py-2 px-4',
         ])}
         type="submit"

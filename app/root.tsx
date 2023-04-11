@@ -15,21 +15,23 @@ import {
   useLoaderData,
   useMatches,
 } from '@remix-run/react';
-import {ShopifySalesChannel, Seo} from '@shopify/hydrogen';
-import {Layout} from '~/components';
-import {GenericError} from './components/GenericError';
-import {NotFound} from './components/NotFound';
+import { ShopifySalesChannel, Seo } from '@shopify/hydrogen';
+import { Layout } from '~/components';
+import { GenericError } from './components/GenericError';
+import { NotFound } from './components/NotFound';
 import styles from './styles/app.css';
 import favicon from '../public/favicon.svg';
-import {seoPayload} from '~/lib/seo.server';
-import {DEFAULT_LOCALE, parseMenu, type EnhancedMenu} from './lib/utils';
+import { seoPayload } from '~/lib/seo.server';
+import { DEFAULT_LOCALE, parseMenu, type EnhancedMenu } from './lib/utils';
 import invariant from 'tiny-invariant';
-import {Shop, Cart} from '@shopify/hydrogen/storefront-api-types';
-import {useAnalytics} from './hooks/useAnalytics';
-
+import { Shop, Cart } from '@shopify/hydrogen/storefront-api-types';
+import { useAnalytics } from './hooks/useAnalytics';
 export const links: LinksFunction = () => {
+  const googleApiURL = "https://fonts.googleapis.com"
+  const googleFontsURL = "https://fonts.gstatic.com"
+  const googleFonts = "https://fonts.googleapis.com/css2?family=Oxygen:wght@300;400;700&display=swap"
   return [
-    {rel: 'stylesheet', href: styles},
+    { rel: 'stylesheet', href: styles },
     {
       rel: 'preconnect',
       href: 'https://cdn.shopify.com',
@@ -38,7 +40,10 @@ export const links: LinksFunction = () => {
       rel: 'preconnect',
       href: 'https://shop.app',
     },
-    {rel: 'icon', type: 'image/svg+xml', href: favicon},
+    { rel: 'icon', type: 'image/svg+xml', href: favicon },
+    { rel: 'preconnect', href: googleApiURL, },
+    { rel: 'preconnect', href: googleFontsURL, crossOrigin: "true" },
+    { rel: 'stylesheet', href: googleFonts, },
   ];
 };
 
@@ -47,14 +52,14 @@ export const meta: MetaFunction = () => ({
   viewport: 'width=device-width,initial-scale=1',
 });
 
-export async function loader({request, context}: LoaderArgs) {
+export async function loader({ request, context }: LoaderArgs) {
   const [customerAccessToken, cartId, layout] = await Promise.all([
     context.session.get('customerAccessToken'),
     context.session.get('cartId'),
     getLayoutData(context),
   ]);
 
-  const seo = seoPayload.root({shop: layout.shop, url: request.url});
+  const seo = seoPayload.root({ shop: layout.shop, url: request.url });
 
   return defer({
     isLoggedIn: Boolean(customerAccessToken),
@@ -119,7 +124,7 @@ export function CatchBoundary() {
             <NotFound type={caught.data?.pageType} />
           ) : (
             <GenericError
-              error={{message: `${caught.status} ${caught.data}`}}
+              error={{ message: `${caught.status} ${caught.data}` }}
             />
           )}
         </Layout>
@@ -129,7 +134,7 @@ export function CatchBoundary() {
   );
 }
 
-export function ErrorBoundary({error}: {error: Error}) {
+export function ErrorBoundary({ error }: { error: Error }) {
   const [root] = useMatches();
   const locale = root?.data?.selectedLocale ?? DEFAULT_LOCALE;
 
@@ -207,7 +212,7 @@ export interface LayoutData {
   cart?: Promise<Cart>;
 }
 
-async function getLayoutData({storefront}: AppLoadContext) {
+async function getLayoutData({ storefront }: AppLoadContext) {
   const HEADER_MENU_HANDLE = 'main-menu';
   const FOOTER_MENU_HANDLE = 'footer';
 
@@ -229,7 +234,7 @@ async function getLayoutData({storefront}: AppLoadContext) {
       - /blog/news/blog-post -> /news/blog-post
       - /collections/all -> /products
   */
-  const customPrefixes = {BLOG: '', CATALOG: 'products'};
+  const customPrefixes = { BLOG: '', CATALOG: 'products' };
 
   const headerMenu = data?.headerMenu
     ? parseMenu(data.headerMenu, customPrefixes)
@@ -239,7 +244,7 @@ async function getLayoutData({storefront}: AppLoadContext) {
     ? parseMenu(data.footerMenu, customPrefixes)
     : undefined;
 
-  return {shop: data.shop, headerMenu, footerMenu};
+  return { shop: data.shop, headerMenu, footerMenu };
 }
 
 const CART_QUERY = `#graphql
@@ -356,10 +361,10 @@ const CART_QUERY = `#graphql
   }
 `;
 
-export async function getCart({storefront}: AppLoadContext, cartId: string) {
+export async function getCart({ storefront }: AppLoadContext, cartId: string) {
   invariant(storefront, 'missing storefront client in cart query');
 
-  const {cart} = await storefront.query<{cart?: Cart}>(CART_QUERY, {
+  const { cart } = await storefront.query<{ cart?: Cart }>(CART_QUERY, {
     variables: {
       cartId,
       country: storefront.i18n.country,
