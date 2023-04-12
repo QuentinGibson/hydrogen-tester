@@ -23,6 +23,7 @@ import {
   Link,
 } from '~/components';
 import { useParams, Form, Await, useMatches } from '@remix-run/react';
+import { Image } from '@shopify/hydrogen';
 import { useWindowScroll } from 'react-use';
 import { Disclosure } from '@headlessui/react';
 import { Suspense, useEffect, useMemo } from 'react';
@@ -46,7 +47,7 @@ export function Layout({
           </a>
         </div>
         <Header
-          logo={layout?.shop?.brand?.logo?.image}
+          logo={layout?.shop?.brand?.logo?.image ?? ""}
           title={layout?.shop.name ?? 'Hydrogen'}
           menu={layout?.headerMenu}
         />
@@ -75,7 +76,6 @@ function Header({ title, menu, logo }: { title: string; menu?: EnhancedMenu, log
   } = useDrawer();
 
   const addToCartFetchers = useCartFetchers('ADD_TO_CART');
-  console.log(logo)
 
   // toggle cart drawer when adding to cart
   useEffect(() => {
@@ -90,6 +90,7 @@ function Header({ title, menu, logo }: { title: string; menu?: EnhancedMenu, log
         <MenuDrawer isOpen={isMenuOpen} onClose={closeMenu} menu={menu} />
       )}
       <DesktopHeader
+        logo={logo}
         isHome={isHome}
         title={title}
         menu={menu}
@@ -243,6 +244,7 @@ function MobileHeader({
 
 function DesktopHeader({
   isHome,
+  logo,
   menu,
   openCart,
   title,
@@ -251,6 +253,7 @@ function DesktopHeader({
   openCart: () => void;
   menu?: EnhancedMenu;
   title: string;
+  logo: ImageType | string
 }) {
   const params = useParams();
   const { y } = useWindowScroll();
@@ -258,14 +261,16 @@ function DesktopHeader({
     <header
       role="banner"
       className={`${isHome
-        ? 'bg-primary/80 dark:bg-contrast/60 text-contrast dark:text-primary shadow-darkHeader'
+        ? 'bg-primary dark:bg-contrast/60 text-contrast dark:text-primary shadow-darkHeader'
         : 'bg-contrast/80 text-primary'
         } ${!isHome && y > 50 && ' shadow-lightHeader'
         } hidden h-nav lg:flex items-center sticky transition duration-300 backdrop-blur-lg z-40 top-0 justify-between w-full leading-none gap-8 px-12 py-8`}
     >
       <div className="flex gap-12">
         <Link className="font-bold" to="/" prefetch="intent">
-          {title}
+          {(typeof logo !== "string") &&
+            <Image width={120} alt="logo for our site" data={logo} />
+          }
         </Link>
         <nav className="flex gap-8">
           {/* Top level menu items */}
