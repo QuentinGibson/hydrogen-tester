@@ -30,6 +30,7 @@ import { Suspense, useEffect, useMemo } from 'react';
 import { useIsHydrated } from '~/hooks/useIsHydrated';
 import { useCartFetchers } from '~/hooks/useCartFetchers';
 import type { LayoutData } from '../root';
+import NavItem from './NavItem';
 
 export function Layout({
   children,
@@ -275,17 +276,8 @@ function DesktopHeader({
         <nav className="flex gap-8">
           {/* Top level menu items */}
           {(menu?.items || []).map((item) => (
-            <Link
-              key={item.id}
-              to={item.to}
-              target={item.target}
-              prefetch="intent"
-              className={({ isActive }) =>
-                isActive ? 'pb-1 border-b -mb-px' : 'pb-1'
-              }
-            >
-              {item.title}
-            </Link>
+            <NavItem item={item} />
+
           ))}
         </nav>
       </div>
