@@ -22,7 +22,7 @@
     --height-nav: 6rem;
   }
   @media (min-width: 48em) {
-    --height-nav: 12rem;
+    --height-nav: 6rem;
     --font-size-heading: 2.25rem; /* text-4xl */
     --font-size-display: 3.75rem; /* text-6xl */
   }

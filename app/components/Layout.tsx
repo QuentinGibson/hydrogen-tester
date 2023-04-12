@@ -270,13 +270,13 @@ function DesktopHeader({
       <div className="flex items-center gap-12">
         <Link className="font-bold" to="/" prefetch="intent">
           {(typeof logo !== "string") &&
-            <Image width={120} alt="logo for our site" data={logo} />
+            <Image width={70} alt="logo for our site" data={logo} />
           }
         </Link>
         <nav className="flex gap-8">
           {/* Top level menu items */}
           {(menu?.items || []).map((item) => (
-            <NavItem item={item} />
+            <NavItem key={item.id} item={item} />
 
           ))}
         </nav>

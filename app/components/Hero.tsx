@@ -1,13 +1,13 @@
 import clsx from 'clsx';
-import type {SerializeFrom} from '@shopify/remix-oxygen';
-import {MediaFile} from '@shopify/hydrogen';
+import type { SerializeFrom } from '@shopify/remix-oxygen';
+import { MediaFile } from '@shopify/hydrogen';
 import type {
   MediaImage,
   Media,
   Video as MediaVideo,
 } from '@shopify/hydrogen/storefront-api-types';
-import {Heading, Text, Link} from '~/components';
-import type {CollectionHero} from '~/routes/($lang)/index';
+import { Heading, Text, Link } from '~/components';
+import type { CollectionHero } from '~/routes/($lang)/index';
 
 /**
  * Hero component that renders metafields attached to collection resources
@@ -116,12 +116,12 @@ function SpreadMedia({
           playsInline: true,
           autoPlay: true,
           width: (scale ?? 1) * width,
-          previewImageOptions: {scale, src: data.previewImage?.url ?? ''},
+          previewImageOptions: { scale, src: data.previewImage?.url ?? '' },
         },
         image: {
           loading,
           decoding,
-          loaderOptions: {scale, crop: 'center'},
+          loaderOptions: { scale, crop: 'center' },
           widths,
           sizes,
           width,

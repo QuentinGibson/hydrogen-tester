@@ -1,17 +1,17 @@
-import {defer, type LoaderArgs} from '@shopify/remix-oxygen';
-import {Suspense} from 'react';
-import {Await, useLoaderData} from '@remix-run/react';
-import {ProductSwimlane, FeaturedCollections, Hero} from '~/components';
-import {MEDIA_FRAGMENT, PRODUCT_CARD_FRAGMENT} from '~/data/fragments';
-import {getHeroPlaceholder} from '~/lib/placeholders';
-import {seoPayload} from '~/lib/seo.server';
+import { defer, type LoaderArgs } from '@shopify/remix-oxygen';
+import { Suspense } from 'react';
+import { Await, useLoaderData } from '@remix-run/react';
+import { ProductSwimlane, FeaturedCollections, Hero } from '~/components';
+import { MEDIA_FRAGMENT, PRODUCT_CARD_FRAGMENT } from '~/data/fragments';
+import { getHeroPlaceholder } from '~/lib/placeholders';
+import { seoPayload } from '~/lib/seo.server';
 import type {
   CollectionConnection,
   Metafield,
   ProductConnection,
 } from '@shopify/hydrogen/storefront-api-types';
-import {AnalyticsPageType} from '@shopify/hydrogen';
-import {routeHeaders, CACHE_SHORT} from '~/data/cache';
+import { AnalyticsPageType } from '@shopify/hydrogen';
+import { routeHeaders, CACHE_SHORT } from '~/data/cache';
 
 interface HomeSeoData {
   shop: {
@@ -34,8 +34,8 @@ export interface CollectionHero {
 
 export const headers = routeHeaders;
 
-export async function loader({params, context}: LoaderArgs) {
-  const {language, country} = context.storefront.i18n;
+export async function loader({ params, context }: LoaderArgs) {
+  const { language, country } = context.storefront.i18n;
 
   if (
     params.lang &&
@@ -43,14 +43,14 @@ export async function loader({params, context}: LoaderArgs) {
   ) {
     // If the lang URL param is defined, yet we still are on `EN-US`
     // the the lang param must be invalid, send to the 404 page
-    throw new Response(null, {status: 404});
+    throw new Response(null, { status: 404 });
   }
 
-  const {shop, hero} = await context.storefront.query<{
+  const { shop, hero } = await context.storefront.query<{
     hero: CollectionHero;
     shop: HomeSeoData;
   }>(HOMEPAGE_SEO_QUERY, {
-    variables: {handle: 'freestyle'},
+    variables: { handle: 'tops' },
   });
 
   const seo = seoPayload.home();
@@ -74,7 +74,7 @@ export async function loader({params, context}: LoaderArgs) {
           language,
         },
       }),
-      secondaryHero: context.storefront.query<{hero: CollectionHero}>(
+      secondaryHero: context.storefront.query<{ hero: CollectionHero }>(
         COLLECTION_HERO_QUERY,
         {
           variables: {
@@ -92,7 +92,7 @@ export async function loader({params, context}: LoaderArgs) {
           language,
         },
       }),
-      tertiaryHero: context.storefront.query<{hero: CollectionHero}>(
+      tertiaryHero: context.storefront.query<{ hero: CollectionHero }>(
         COLLECTION_HERO_QUERY,
         {
           variables: {
@@ -136,7 +136,7 @@ export default function Homepage() {
       {featuredProducts && (
         <Suspense>
           <Await resolve={featuredProducts}>
-            {({products}) => {
+            {({ products }) => {
               if (!products?.nodes) return <></>;
               return (
                 <ProductSwimlane
@@ -153,7 +153,7 @@ export default function Homepage() {
       {secondaryHero && (
         <Suspense fallback={<Hero {...skeletons[1]} />}>
           <Await resolve={secondaryHero}>
-            {({hero}) => {
+            {({ hero }) => {
               if (!hero) return <></>;
               return <Hero {...hero} />;
             }}
@@ -164,7 +164,7 @@ export default function Homepage() {
       {featuredCollections && (
         <Suspense>
           <Await resolve={featuredCollections}>
-            {({collections}) => {
+            {({ collections }) => {
               if (!collections?.nodes) return <></>;
               return (
                 <FeaturedCollections
@@ -180,7 +180,7 @@ export default function Homepage() {
       {tertiaryHero && (
         <Suspense fallback={<Hero {...skeletons[2]} />}>
           <Await resolve={tertiaryHero}>
-            {({hero}) => {
+            {({ hero }) => {
               if (!hero) return <></>;
               return <Hero {...hero} />;
             }}
@@ -198,21 +198,21 @@ const COLLECTION_CONTENT_FRAGMENT = `#graphql
     handle
     title
     descriptionHtml
-    heading: metafield(namespace: "hero", key: "title") {
+    heading: metafield(namespace: "custom", key: "title") {
       value
     }
-    byline: metafield(namespace: "hero", key: "byline") {
+    byline: metafield(namespace: "custom", key: "byline") {
       value
     }
-    cta: metafield(namespace: "hero", key: "cta") {
+    cta: metafield(namespace: "custom", key: "cta") {
       value
     }
-    spread: metafield(namespace: "hero", key: "spread") {
+    spread: metafield(namespace: "custom", key: "spread") {
       reference {
         ...Media
       }
     }
-    spreadSecondary: metafield(namespace: "hero", key: "spread_secondary") {
+    spreadSecondary: metafield(namespace: "custom", key: "spread_secondary") {
       reference {
         ...Media
       }
