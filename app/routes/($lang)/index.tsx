@@ -50,7 +50,7 @@ export async function loader({ params, context }: LoaderArgs) {
     hero: CollectionHero;
     shop: HomeSeoData;
   }>(HOMEPAGE_SEO_QUERY, {
-    variables: { handle: 'tops' },
+    variables: { handle: 'summer-collection' },
   });
 
   const seo = seoPayload.home();
