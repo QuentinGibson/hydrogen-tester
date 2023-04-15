@@ -3,7 +3,7 @@ import {
   type EnhancedMenuItem,
   useIsHomePath,
 } from '~/lib/utils';
-import { Image as ImageType } from '@shopify/hydrogen/storefront-api-types';
+import { Image as ImageType, MenuItem, MenuItemType } from '@shopify/hydrogen/storefront-api-types';
 import {
   Drawer,
   useDrawer,
@@ -26,7 +26,7 @@ import { useParams, Form, Await, useMatches } from '@remix-run/react';
 import { Image } from '@shopify/hydrogen';
 import { useWindowScroll } from 'react-use';
 import { Disclosure } from '@headlessui/react';
-import { Suspense, useEffect, useMemo } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import { useIsHydrated } from '~/hooks/useIsHydrated';
 import { useCartFetchers } from '~/hooks/useCartFetchers';
 import type { LayoutData } from '../root';
@@ -258,14 +258,68 @@ function DesktopHeader({
 }) {
   const params = useParams();
   const { y } = useWindowScroll();
+  const [scrolled, setScrolled] = useState<boolean>(false);
+  const [scrollDirection, setScrollDirection] = useState<string>('up');
+  const [hoveredItem, setHoveredItem] = useState<MenuItem>()
+  const [hovered, setHovered] = useState<boolean>(false)
+
+  const handleMenuItemEnter = (item: MenuItem) => {
+    console.log("Mouse entered")
+    setHovered(true)
+    if (item?.items) {
+      setHoveredItem(item)
+    }
+  }
+  const handleMenuItemExit = (item: MenuItem) => {
+    setHovered(false)
+    setHoveredItem(undefined)
+  }
+  useEffect(() => {
+    const onScroll = () => {
+      if (window.scrollY > 0) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', onScroll);
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+    };
+  }, [])
+  useEffect(() => {
+    const onScroll = () => {
+      if (window.scrollY > 0) {
+        if (window.scrollY < previousScrollY) {
+          setScrollDirection('up');
+        } else if (window.scrollY > previousScrollY) {
+          setScrollDirection('down');
+        }
+        previousScrollY = window.scrollY;
+      }
+    };
+
+    let previousScrollY = window.scrollY;
+
+    window.addEventListener('scroll', onScroll);
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+    };
+  }, []);
+
+
   return (
     <header
       role="banner"
       className={`${isHome
-        ? 'bg-primary dark:bg-contrast/60 text-contrast dark:text-primary shadow-darkHeader'
-        : 'bg-contrast/80 text-primary'
-        } ${!isHome && y > 50 && ' shadow-lightHeader'
-        } hidden h-nav lg:flex items-center sticky transition duration-300 backdrop-blur-lg z-40 top-0 justify-between w-full leading-none gap-8 px-12 py-8`}
+        ? 'bg-primary dark:bg-contrast text-contrast dark:text-primary shadow-darkHeader'
+        : 'bg-contrast text-primary'
+        } ${!isHome && y > 50 && ' shadow-lightHeader'} 
+        ${scrolled && scrollDirection === "down" ? ' -translate-y-56' : ' translate-y-0'}
+         hidden h-nav lg:flex items-center sticky transition duration-300 top-0 backdrop-blur-lg z-40 justify-between w-full leading-none gap-8 px-12 py-8`}
     >
       <div className="flex items-center gap-12">
         <Link className="font-bold" to="/" prefetch="intent">
@@ -276,7 +330,7 @@ function DesktopHeader({
         <nav className="flex gap-8">
           {/* Top level menu items */}
           {(menu?.items || []).map((item) => (
-            <NavItem key={item.id} item={item} />
+            <NavItem handleMenuItemEnter={handleMenuItemEnter} handleMenuItemExit={handleMenuItemExit} key={item.id} item={item} />
 
           ))}
         </nav>
@@ -308,6 +362,7 @@ function DesktopHeader({
         <AccountLink className="relative flex items-center justify-center w-8 h-8 focus:ring-primary/5" />
         <CartCount isHome={isHome} openCart={openCart} />
       </div>
+      {hovered && <div className="absolute left-0 w-full h-52 bg-contrast top-nav"></div>}
     </header>
   );
 }

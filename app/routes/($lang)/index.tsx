@@ -78,7 +78,7 @@ export async function loader({ params, context }: LoaderArgs) {
         COLLECTION_HERO_QUERY,
         {
           variables: {
-            handle: 'backcountry',
+            handle: 'bikini-collection',
             country,
             language,
           },
@@ -96,7 +96,7 @@ export async function loader({ params, context }: LoaderArgs) {
         COLLECTION_HERO_QUERY,
         {
           variables: {
-            handle: 'winter-2022',
+            handle: 'sales-collection',
             country,
             language,
           },
@@ -130,7 +130,7 @@ export default function Homepage() {
   return (
     <>
       {primaryHero && (
-        <Hero {...primaryHero} height="full" top loading="eager" />
+        <Hero {...primaryHero} height="full" loading="eager" />
       )}
 
       {featuredProducts && (
