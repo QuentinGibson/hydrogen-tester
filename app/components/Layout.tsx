@@ -260,17 +260,19 @@ function DesktopHeader({
   const { y } = useWindowScroll();
   const [scrolled, setScrolled] = useState<boolean>(false);
   const [scrollDirection, setScrollDirection] = useState<string>('up');
-  const [hoveredItem, setHoveredItem] = useState<MenuItem>()
+  const [hoveredItem, setHoveredItem] = useState<MenuItem | undefined>(undefined)
   const [hovered, setHovered] = useState<boolean>(false)
 
   const handleMenuItemEnter = (item: MenuItem) => {
-    console.log("Mouse entered")
-    setHovered(true)
-    if (item?.items) {
-      setHoveredItem(item)
+    console.log(`Set item to ${JSON.stringify(item)}`)
+    setHoveredItem(item)
+    if (item?.items.length > 0) {
+      setHovered(true)
+    } else {
+      setHovered(false)
     }
   }
-  const handleMenuItemExit = (item: MenuItem) => {
+  const handleMenuItemExit = () => {
     setHovered(false)
     setHoveredItem(undefined)
   }
@@ -314,6 +316,7 @@ function DesktopHeader({
   return (
     <header
       role="banner"
+      onMouseLeave={handleMenuItemExit}
       className={`${isHome
         ? 'bg-primary dark:bg-contrast text-contrast dark:text-primary shadow-darkHeader'
         : 'bg-contrast text-primary'
@@ -362,7 +365,25 @@ function DesktopHeader({
         <AccountLink className="relative flex items-center justify-center w-8 h-8 focus:ring-primary/5" />
         <CartCount isHome={isHome} openCart={openCart} />
       </div>
-      {hovered && <div className="absolute left-0 w-full h-52 bg-contrast top-nav"></div>}
+      {hovered &&
+        <div className={`absolute left-0 w-full h-52 top-nav ${isHome
+          ? 'bg-primary dark:bg-contrast text-contrast dark:text-primary shadow-darkHeader'
+          : 'bg-contrast text-primary'
+          }`}>
+          <ul className='flex w-full text-lg justify-evenly'>
+            {hoveredItem?.items.map(item =>
+              <li className="font-bold" key={item.id}>
+                {item.title}
+                {item?.items &&
+                  <ul className="flex flex-col text-base font-normal">
+                    {item?.items.map(subitem => (<li className="">{subitem.title}</li>))}
+                  </ul>}
+
+              </li>
+            )}
+          </ul>
+        </div>
+      }
     </header>
   );
 }

@@ -180,6 +180,9 @@ const LAYOUT_QUERY = `#graphql
         ...MenuItem
         items {
           ...MenuItem
+          items {
+            ...MenuItem
+          }
         }
       }
     }
