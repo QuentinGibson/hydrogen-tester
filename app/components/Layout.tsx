@@ -260,10 +260,10 @@ function DesktopHeader({
   const { y } = useWindowScroll();
   const [scrolled, setScrolled] = useState<boolean>(false);
   const [scrollDirection, setScrollDirection] = useState<string>('up');
-  const [hoveredItem, setHoveredItem] = useState<MenuItem | undefined>(undefined)
+  const [hoveredItem, setHoveredItem] = useState<EnhancedMenuItem | undefined>(undefined)
   const [hovered, setHovered] = useState<boolean>(false)
 
-  const handleMenuItemEnter = (item: MenuItem) => {
+  const handleMenuItemEnter = (item: EnhancedMenuItem) => {
     console.log(`Set item to ${JSON.stringify(item)}`)
     setHoveredItem(item)
     if (item?.items.length > 0) {
@@ -333,7 +333,7 @@ function DesktopHeader({
         <nav className="flex gap-8">
           {/* Top level menu items */}
           {(menu?.items || []).map((item) => (
-            <NavItem handleMenuItemEnter={handleMenuItemEnter} handleMenuItemExit={handleMenuItemExit} key={item.id} item={item} />
+            <NavItem handleMenuItemEnter={handleMenuItemEnter} key={item.id} item={item} />
 
           ))}
         </nav>
@@ -366,17 +366,24 @@ function DesktopHeader({
         <CartCount isHome={isHome} openCart={openCart} />
       </div>
       {hovered &&
-        <div className={`absolute left-0 w-full h-52 top-nav ${isHome
+        <div className={`absolute left-0 px-10 py-12  w-full h-52 top-nav ${isHome
           ? 'bg-primary dark:bg-contrast text-contrast dark:text-primary shadow-darkHeader'
           : 'bg-contrast text-primary'
           }`}>
-          <ul className='flex w-full text-lg justify-evenly'>
+          <ul className='grid w-full grid-cols-4 text-lg justify-evenly'>
             {hoveredItem?.items.map(item =>
-              <li className="font-bold" key={item.id}>
-                {item.title}
+              <li className="pl-8 font-bold" key={item.id}>
+                {item.to
+                  ? <Link to={item.to} className="inline-block mb-4" >
+                    {item.title}
+                  </Link>
+                  : <span className="inline-block mb-8">{item.title}</span>
+                }
                 {item?.items &&
-                  <ul className="flex flex-col text-base font-normal">
-                    {item?.items.map(subitem => (<li className="">{subitem.title}</li>))}
+                  <ul className="flex flex-col text-sm font-normal">
+                    {item?.items.map(subitem => (<li>
+                      <Link className="hover:text-highlight" to={subitem.to}>{item.title}</Link>
+                    </li>))}
                   </ul>}
 
               </li>

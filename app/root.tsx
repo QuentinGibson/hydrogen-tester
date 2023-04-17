@@ -45,6 +45,10 @@ export const links: LinksFunction = () => {
 export const meta: MetaFunction = () => ({
   charset: 'utf-8',
   viewport: 'width=device-width,initial-scale=1',
+  googleAnalytics: {
+    name: "google-site-verification",
+    content: "ndKnKdz9clBRp-baRfX6wxB8NicYqmy_13YPKVt1Vss"
+  }
 });
 
 export async function loader({ request, context }: LoaderArgs) {

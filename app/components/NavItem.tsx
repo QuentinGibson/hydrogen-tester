@@ -1,7 +1,7 @@
 import { Link } from "~/components";
 import { BsChevronDown } from "react-icons/bs";
 
-export default function NavItem({ item, handleMenuItemEnter, handleMenuItemExit }: any) {
+export default function NavItem({ item, handleMenuItemEnter }: any) {
 
   return (item?.items.length > 0) ?
     <div onMouseEnter={() => handleMenuItemEnter(item)} >
