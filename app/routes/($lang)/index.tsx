@@ -12,6 +12,7 @@ import type {
 } from '@shopify/hydrogen/storefront-api-types';
 import { AnalyticsPageType } from '@shopify/hydrogen';
 import { routeHeaders, CACHE_SHORT } from '~/data/cache';
+import { TopHero } from '~/components/TopHero';
 
 interface HomeSeoData {
   shop: {
@@ -130,7 +131,7 @@ export default function Homepage() {
   return (
     <>
       {primaryHero && (
-        <Hero {...primaryHero} height="full" loading="eager" />
+        <TopHero {...primaryHero} loading="eager" />
       )}
 
       {featuredProducts && (
@@ -249,7 +250,7 @@ export const HOMEPAGE_FEATURED_PRODUCTS_QUERY = `#graphql
   ${PRODUCT_CARD_FRAGMENT}
   query homepageFeaturedProducts($country: CountryCode, $language: LanguageCode)
   @inContext(country: $country, language: $language) {
-    products(first: 8) {
+    products(first: 4) {
       nodes {
         ...ProductCard
       }
